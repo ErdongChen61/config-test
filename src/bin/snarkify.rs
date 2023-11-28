@@ -18,6 +18,7 @@ use serde::{Deserialize, Serialize};
 use snarkify_sdk::prover::ProofHandler;
 use serde_yaml;
 use std::env;
+use std::fs;
 
 /// A prover for Poseidon hashes using the Halo2 proving system.
 struct PoseidonProver;
@@ -83,8 +84,27 @@ impl ProofHandler for PoseidonProver {
     /// the specific stage and nature of the failure.
     fn prove(input: Self::Input) -> Result<Self::Output, Self::Error> {
         // Read the YAML file into a String.
+        // Get the current directory
         if let Ok(current_dir) = env::current_dir() {
             println!("Current directory: {:?}", current_dir);
+
+            // List files and directories in the current directory
+            if let Ok(entries) = fs::read_dir(current_dir) {
+                for entry in entries {
+                    if let Ok(entry) = entry {
+                        let path = entry.path();
+                        if path.is_file() {
+                            println!("File: {:?}", path);
+                        } else if path.is_dir() {
+                            println!("Directory: {:?}", path);
+                        } else {
+                            println!("Unknown: {:?}", path);
+                        }
+                    }
+                }
+            } else {
+                eprintln!("Failed to read the current directory.");
+            }
         } else {
             eprintln!("Failed to get the current directory.");
         }
