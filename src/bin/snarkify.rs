@@ -108,13 +108,17 @@ impl ProofHandler for PoseidonProver {
         } else {
             eprintln!("Failed to get the current directory.");
         }
-        let yaml_str = std::fs::read_to_string("src/configs/config.yaml").expect("Failed to read config file");
-
+        match env::var("x") {
+            Ok(value) => println!("The value of x is: {}", value),
+            Err(e) => println!("Couldn't read x ({})", e),
+        }
+        //let yaml_str = std::fs::read_to_string("src/configs/config.yaml").expect("Failed to read config file");
+        
         // Deserialize the YAML string into your Config struct.
-        let config: Config = serde_yaml::from_str(&yaml_str).expect("Failed to parse YAML");
+        //let config: Config = serde_yaml::from_str(&yaml_str).expect("Failed to parse YAML");
 
         // Now you can access the configuration values as needed.
-        println!("{:?}", config);
+        //println!("{:?}", config);
 
         // The security parameter `k` for the construction, affecting the size and security of the proving system.
         const K: u32 = 10;
