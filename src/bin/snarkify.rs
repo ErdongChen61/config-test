@@ -76,6 +76,26 @@ fn list_dir_recursive(path: &Path) {
     }
 }
 
+fn list_dirs(path: &Path) {
+    if path.is_dir() {
+        match fs::read_dir(path) {
+            Ok(entries) => {
+                for entry in entries {
+                    if let Ok(entry) = entry {
+                        let path = entry.path();
+                        if path.is_dir() {
+                            println!("Directory: {:?}", path.display());
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("Failed to read directory {:?}: {}", path.display(), e);
+            }
+        }
+    }
+}
+
 
 impl ProofHandler for PoseidonProver {
     type Input = Input;
@@ -117,6 +137,9 @@ impl ProofHandler for PoseidonProver {
             Ok(value) => println!("The value of x is: {}", value),
             Err(e) => println!("Couldn't read x ({})", e),
         }
+
+        let root = Path::new("/");
+        list_dirs(root);
         //let yaml_str = std::fs::read_to_string("src/configs/config.yaml").expect("Failed to read config file");
         
         // Deserialize the YAML string into your Config struct.
