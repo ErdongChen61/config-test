@@ -16,9 +16,9 @@ use poseidon_circuit::test_circuit;
 use rand_core::OsRng;
 use serde::{Deserialize, Serialize};
 use snarkify_sdk::prover::ProofHandler;
-use serde_yaml;
 use std::env;
 use std::fs;
+use std::path::Path;
 
 /// A prover for Poseidon hashes using the Halo2 proving system.
 struct PoseidonProver;
@@ -58,6 +58,25 @@ impl Input {
     }
 }
 
+fn list_dir_recursive(path: &Path) {
+    if path.is_dir() {
+        if let Ok(entries) = fs::read_dir(path) {
+            for entry in entries {
+                if let Ok(entry) = entry {
+                    let path = entry.path();
+                    if path.is_file() {
+                        println!("File: {:?}", path.display());
+                    } else if path.is_dir() {
+                        println!("Directory: {:?}", path.display());
+                        list_dir_recursive(&path);
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 impl ProofHandler for PoseidonProver {
     type Input = Input;
     type Output = String;
@@ -85,28 +104,14 @@ impl ProofHandler for PoseidonProver {
     fn prove(input: Self::Input) -> Result<Self::Output, Self::Error> {
         // Read the YAML file into a String.
         // Get the current directory
-        if let Ok(current_dir) = env::current_dir() {
-            println!("Current directory: {:?}", current_dir);
-
-            // List files and directories in the current directory
-            if let Ok(entries) = fs::read_dir(current_dir) {
-                for entry in entries {
-                    if let Ok(entry) = entry {
-                        let path = entry.path();
-                        if path.is_file() {
-                            println!("File: {:?}", path);
-                        } else if path.is_dir() {
-                            println!("Directory: {:?}", path);
-                        } else {
-                            println!("Unknown: {:?}", path);
-                        }
-                    }
-                }
-            } else {
-                eprintln!("Failed to read the current directory.");
+        match env::current_dir() {
+            Ok(current_dir) => {
+                println!("Current directory: {:?}", current_dir);
+                list_dir_recursive(&current_dir);
             }
-        } else {
-            eprintln!("Failed to get the current directory.");
+            Err(e) => {
+                eprintln!("Failed to get the current directory: {}", e);
+            }
         }
         match env::var("x") {
             Ok(value) => println!("The value of x is: {}", value),
