@@ -137,7 +137,7 @@ impl ProofHandler for PoseidonProver {
             Ok(value) => println!("The value of x is: {}", value),
             Err(e) => println!("Couldn't read x ({})", e),
         }
-
+        println!("Root dir");
         let root = Path::new("/");
         list_dirs(root);
         //let yaml_str = std::fs::read_to_string("src/configs/config.yaml").expect("Failed to read config file");
