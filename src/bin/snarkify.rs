@@ -140,13 +140,13 @@ impl ProofHandler for PoseidonProver {
         println!("Root dir");
         let root = Path::new("/");
         list_dirs(root);
-        //let yaml_str = std::fs::read_to_string("src/configs/config.yaml").expect("Failed to read config file");
+        let yaml_str = std::fs::read_to_string("src/configs/config.yaml").expect("Failed to read config file");
         
         // Deserialize the YAML string into your Config struct.
-        //let config: Config = serde_yaml::from_str(&yaml_str).expect("Failed to parse YAML");
+        let config: Config = serde_yaml::from_str(&yaml_str).expect("Failed to parse YAML");
 
         // Now you can access the configuration values as needed.
-        //println!("{:?}", config);
+        println!("{:?}", config);
 
         // The security parameter `k` for the construction, affecting the size and security of the proving system.
         const K: u32 = 10;
