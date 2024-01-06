@@ -19,6 +19,9 @@ use snarkify_sdk::prover::ProofHandler;
 use std::env;
 use std::fs;
 use std::path::Path;
+use std::fs::File;
+use std::io::Read;
+use std::time::Instant;
 
 /// A prover for Poseidon hashes using the Halo2 proving system.
 struct PoseidonProver;
@@ -147,6 +150,23 @@ impl ProofHandler for PoseidonProver {
 
         // Now you can access the configuration values as needed.
         println!("{:?}", config);
+
+        // Attempt to read the entire file
+        let start = Instant::now(); // Start the timer
+        let file_path = Path::new("/mnt/data/kzg_bn254_15.srs");
+        let mut file_contents = Vec::new();
+
+        match File::open(&file_path) {
+            Ok(mut file) => {
+                if let Err(e) = file.read_to_end(&mut file_contents) {
+                    eprintln!("Failed to read the file: {}", e);
+                } else {
+                    let duration = start.elapsed(); // Calculate the duration
+                    println!("Time taken to read file: {:?}", duration);
+                }
+            }
+            Err(e) => eprintln!("Failed to open the file: {}", e),
+        };
 
         // The security parameter `k` for the construction, affecting the size and security of the proving system.
         const K: u32 = 10;
